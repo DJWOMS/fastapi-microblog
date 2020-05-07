@@ -1,19 +1,26 @@
 from pydantic import BaseModel
+from typing import Optional, List
 from datetime import datetime
+from user.schemas import User
 
 
 class PostBase(BaseModel):
     title: str
     text: str
-    date: datetime
-
-    class Config:
-        orm_mode = True
 
 
 class PostList(PostBase):
     id: int
+    date: datetime
+    # user: User
+
+
+class PostSingle(PostList):
+    children: List[PostBase]
 
 
 class PostCreate(PostBase):
-    pass
+    parent_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
