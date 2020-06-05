@@ -1,8 +1,27 @@
+import uuid
+from typing import Optional
+
+import pydantic
 from fastapi_users import models
+from pydantic import EmailStr, BaseModel
 
 
 class User(models.BaseUser):
-    pass
+
+    class Config:
+        orm_mode = True
+
+
+class UserInPost(BaseModel):
+    id: Optional[str]
+    name: str = None
+
+    @pydantic.validator("id", pre=True, always=True)
+    def default_id(cls, v):
+        return v or str(uuid.uuid4())
+
+    class Config:
+        orm_mode = True
 
 
 class UserCreate(User, models.BaseUserCreate):
@@ -15,3 +34,4 @@ class UserUpdate(User, models.BaseUserUpdate):
 
 class UserDB(User, models.BaseUserDB):
     pass
+
